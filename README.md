@@ -17,3 +17,7 @@ Run the PlayerFinder.py script to generate the latest PlayerIDs.csv : `python -u
 ## Step 2:
 
 After PlayerIDs.csv is generated, run the PlayerSeasonsStats.py script to search for the Player of your choice: `python -u PlayerSeasonsStats.py`
+
+## Please Notes:
+
+Step 1 is not required as PlayerIds.csv is already provided.
