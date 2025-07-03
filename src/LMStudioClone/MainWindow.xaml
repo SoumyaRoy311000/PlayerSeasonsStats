@@ -1,0 +1,137 @@
+<ui:Window x:Class="LMStudioClone.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        Title="LM Studio Clone - Enhanced AI Workstation" 
+        Height="800" Width="1200"
+        MinHeight="600" MinWidth="800"
+        WindowStartupLocation="CenterScreen"
+        ui:WindowHelper.UseModernWindowStyle="True">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New Conversation" Command="{Binding NewConversationCommand}"/>
+                <MenuItem Header="_Open Document" Command="{Binding OpenDocumentCommand}"/>
+                <MenuItem Header="_Import Image" Command="{Binding ImportImageCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Settings" Command="{Binding OpenSettingsCommand}"/>
+                <Separator/>
+                <MenuItem Header="E_xit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Models">
+                <MenuItem Header="_Browse Models" Command="{Binding BrowseModelsCommand}"/>
+                <MenuItem Header="_Download Model" Command="{Binding DownloadModelCommand}"/>
+                <MenuItem Header="_Manage Models" Command="{Binding ManageModelsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Hardware Info" Command="{Binding ShowHardwareInfoCommand}"/>
+                <MenuItem Header="_Performance Monitor" Command="{Binding ShowPerformanceCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About" Command="{Binding AboutCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" MinWidth="200"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar -->
+            <Border Grid.Column="0" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" 
+                    BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Model Selection -->
+                    <StackPanel Grid.Row="0" Margin="10">
+                        <TextBlock Text="Active Model" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="ModelSelector" 
+                                  ItemsSource="{Binding AvailableModels}"
+                                  SelectedItem="{Binding SelectedModel}"
+                                  DisplayMemberPath="Name"/>
+                        <TextBlock Text="{Binding SelectedModel.Status}" 
+                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                   Margin="0,2,0,0" FontSize="11"/>
+                    </StackPanel>
+
+                    <!-- Hardware Status -->
+                    <StackPanel Grid.Row="1" Margin="10">
+                        <TextBlock Text="Hardware" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" 
+                                     Fill="{Binding HardwareStatus.StatusColor}" 
+                                     VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding HardwareStatus.DeviceName}" 
+                                       Margin="5,0,0,0" FontSize="11"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding HardwareStatus.MemoryUsage}" 
+                                   FontSize="10" 
+                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    </StackPanel>
+
+                    <!-- Navigation -->
+                    <StackPanel Grid.Row="2" Margin="10">
+                        <TextBlock Text="Workspaces" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <ui:NavigationView x:Name="NavigationView" 
+                                           IsBackButtonVisible="Collapsed"
+                                           IsSettingsVisible="False"
+                                           IsPaneToggleButtonVisible="False"
+                                           OpenPaneLength="200"
+                                           CompactModeThresholdWidth="0"
+                                           ExpandedModeThresholdWidth="0">
+                            <ui:NavigationView.MenuItems>
+                                <ui:NavigationViewItem Content="Chat" Icon="Message" Tag="Chat"/>
+                                <ui:NavigationViewItem Content="Documents" Icon="Document" Tag="Documents"/>
+                                <ui:NavigationViewItem Content="Images" Icon="Pictures" Tag="Images"/>
+                                <ui:NavigationViewItem Content="Generation" Icon="Add" Tag="Generation"/>
+                                <ui:NavigationViewItem Content="Workflows" Icon="Flow" Tag="Workflows"/>
+                            </ui:NavigationView.MenuItems>
+                        </ui:NavigationView>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" 
+                          Background="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"/>
+
+            <!-- Main Content -->
+            <ContentPresenter Grid.Column="2" x:Name="MainContentPresenter" 
+                              Content="{Binding CurrentView}"/>
+        </Grid>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding InferenceStats}" Margin="0,0,10,0"/>
+                    <ProgressBar Width="100" Height="16" 
+                                 Value="{Binding ProgressValue}" 
+                                 Visibility="{Binding IsProcessing, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</ui:Window>
+
